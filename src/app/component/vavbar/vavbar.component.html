@@ -1,0 +1,77 @@
+<nav class="medical-navbar">
+  <div class="hospital-brand">
+    <div class="logo-container">
+      <div class="brand-logo">
+        <img src="assets/logo.png" alt="Hospital Logo" class="logo-image">
+      </div>
+    </div>
+  </div>
+
+  <button class="mobile-menu-toggle" (click)="toggleMobileMenu()" aria-label="Toggle navigation menu">
+    <span class="hamburger-line" [class.active]="menuOpen"></span>
+    <span class="hamburger-line" [class.active]="menuOpen"></span>
+    <span class="hamburger-line" [class.active]="menuOpen"></span>
+  </button>
+
+  <div class="nav-links" [class.mobile-open]="menuOpen">
+
+    <div class="nav-section">
+        <a routerLink="/home" (click)="closeMobileMenu()" class="nav-link">
+            <span class="nav-icon"></span>
+            <span class="nav-text">Home</span>
+        </a>
+
+        <a routerLink="/about" routerLinkActive="active" (click)="closeMobileMenu()" class="nav-link">
+        <span class="nav-icon"></span>
+        <span class="nav-text">About Us</span>
+      </a>
+    </div>
+
+    <div class="nav-section" *ngIf="auth.isLoggedIn()">
+      <a [routerLink]="getDashboardRoute()" routerLinkActive="active" (click)="closeMobileMenu()" class="nav-link dashboard-link">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Dashboard</span>
+      </a>
+      <a routerLink="/book-appointment" routerLinkActive="active" (click)="closeMobileMenu()" class="nav-link" *ngIf="auth.hasRole('PATIENT')">
+        <span class="nav-icon"></span>
+        <span class="nav-text">Book Appointment</span>
+      </a>
+    </div>
+
+    <div class="auth-buttons">
+      <div class="auth-section" *ngIf="!auth.isLoggedIn()">
+        <a routerLink="/auth/register" (click)="closeMobileMenu()" class="btn btn-register">
+          <span class="btn-icon"></span>
+          <span class="btn-text">Register</span>
+        </a>
+        <a routerLink="/auth/login" (click)="closeMobileMenu()" class="btn btn-login">
+          <span class="btn-icon"></span>
+          <span class="btn-text">Login</span>
+        </a>
+      </div>
+      
+      <div class="user-section" *ngIf="auth.isLoggedIn()">
+        <div class="user-info">
+          <div class="user-avatar">
+            <span class="avatar-icon"></span>
+          </div>
+          <div class="user-details">
+            <span class="user-name">{{ auth.getUserName() || 'User' }}</span>
+            <span class="user-role">{{ getUserRoleText() }}</span>
+          </div>
+        </div>
+        <!-- <button (click)="logout()" class="btn btn-logout">
+          <span class="btn-icon"></span>
+          <span class="btn-text">Logout</span>
+        </button> -->
+      </div>
+    </div>
+  </div>
+
+    <div class="emergency-banner" *ngIf="!auth.isLoggedIn()">
+    <span class="emergency-icon"></span>
+    <span class="emergency-text">Emergency: Call 911</span>
+  </div>
+</nav>
+
+<div class="mobile-overlay" [class.show]="menuOpen" (click)="closeMobileMenu()"></div>
