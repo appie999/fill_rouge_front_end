@@ -66,6 +66,6 @@ export class VavbarComponent {
 
 isRouterActive(route: string): boolean {
   return this.router.url.startsWith(route);
-
+}
 
 }
