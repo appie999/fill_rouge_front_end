@@ -1,0 +1,164 @@
+<app-vavbar></app-vavbar>
+<div class="layout">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand">Clinic <b>IQ</b></div>
+
+    <nav class="menu">
+      <a class="menu-item active" routerLink="/patient/dashboard">
+        <span class="mi"></span><span class="label">Tableau de Bord</span>
+      </a>
+      <a class="menu-item" routerLink="/patient/appointments">
+        <span class="mi"></span><span class="label">Mes Rendez‑vous</span>
+      </a>
+      <a class="menu-item" routerLink="/patient/prescriptions">
+        <span class="mi"></span><span class="label">Ordonnances</span>
+      </a>
+      <a class="menu-item" routerLink="/patient/labs">
+        <span class="mi"></span><span class="label">Résultats Labo</span>
+      </a>
+      <a class="menu-item" routerLink="/patient/billing">
+        <span class="mi"></span><span class="label">Paiements</span>
+      </a>
+      <a class="menu-item" routerLink="/patient/messages">
+        <span class="mi"></span><span class="label">Messages</span>
+      </a>
+      <a class="menu-item" routerLink="/patient/profile">
+        <span class="mi"></span><span class="label">Mon Profil</span>
+      </a>
+    </nav>
+
+    <div class="menu-footer">
+      <a class="menu-item danger" routerLink="/logout" (click)="logout()">
+        <span class="mi"></span><span class="label">Déconnexion</span>
+      </a>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="content">
+    <!-- Topbar -->
+    <header class="topbar">
+      <div></div>
+      <div class="dashboard-header">
+  <h2>Bienvenue, {{ userName }} !</h2>
+</div>
+    </header>
+
+    <!-- KPIs -->
+    <section class="kpi-row">
+      <article class="mini-card">
+        <div class="mini-head"><span>Prochain Rendez‑vous</span><span class="ico"></span></div>
+        <div class="mini-val">Mar 18 • 10:30</div>
+      </article>
+      <article class="mini-card">
+        <div class="mini-head"><span>Ordonnances Actives</span><span class="ico"></span></div>
+        <div class="mini-val">2</div>
+      </article>
+      <article class="mini-card">
+        <div class="mini-head"><span>Factures Impayées</span><span class="ico"></span></div>
+        <div class="mini-val">€120</div>
+      </article>
+    </section>
+
+    <!-- Upcoming appointments -->
+    <section class="card">
+      <div class="card-title">Mes Rendez‑vous</div>
+    
+      
+      <div *ngIf="loading" class="text-center p-3">
+        <p>Chargement des rendez-vous...</p>
+      </div>
+      <div *ngIf="error" class="text-danger p-3">
+        <p><strong>Erreur:</strong> {{ error }}</p>
+        <button class="btn btn-sm btn-primary" (click)="loadAppointments()">Réessayer</button>
+      </div>
+      <div class="table" *ngIf="!loading && !error">
+        <div class="thead">
+          <div>DATE</div><div>HEURE</div><div>MÉDECIN</div><div>MOTIF</div><div>STATUT</div><div>ACTIONS</div>
+        </div>
+        <div class="tbody">
+          <div class="tr" *ngFor="let appointment of appointments; let i = index">
+            <div data-label="Date">{{ appointment.dateFormatted || formatDate(appointment.date) }}</div>
+            <div data-label="Heure">{{ appointment.time || '10:00' }}</div>
+            <div data-label="Médecin">{{ appointment.doctorName || ('Dr. Médecin ' + appointment.doctorId) }}</div>
+            <div data-label="Motif">{{ appointment.reason || 'Consultation générale' }}</div>
+            <div data-label="Statut">
+              <span class="pill" [ngClass]="getStatusClass(appointment.status)">
+                {{ appointment.statusText || getStatusText(appointment.status) }}
+              </span>
+            </div>
+            <div data-label="Actions" class="actions">
+              <button *ngIf="appointment.status === 'PENDING'" 
+                      class="btn btn-sm btn-danger" 
+                      (click)="cancelAppointment(appointment.id)">
+                Annuler
+              </button>
+              <button *ngIf="appointment.status === 'APPROVED'" 
+                      class="btn btn-sm btn-info">
+                Détails
+              </button>
+              <span *ngIf="appointment.status === 'REJECTED'" class="text-muted">-</span>
+            </div>
+          </div>
+          <div class="tr" *ngIf="!loading && !error && appointments.length === 0">
+            <div colspan="6" class="text-center text-muted p-3">
+              <p>Aucun rendez-vous trouvé</p>
+              <p class="small">Cliquez sur "Prendre un Rendez-vous" pour réserver votre premier rendez-vous</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Prescriptions -->
+    <section class="card">
+      <div class="card-title">Ordonnances Récentes</div>
+      <ul class="list">
+        <li>
+          <span><b>Amoxicilline</b> — 500mg, 2x/jour (14 jours)</span>
+          <span class="pill green">Active</span>
+        </li>
+        <li>
+          <span><b>Ibuprofène</b> — 400mg, si douleur</span>
+          <span class="pill gray">Expirée</span>
+        </li>
+      </ul>
+    </section>
+
+    <!-- Billing -->
+    <section class="card">
+      <div class="card-title">Factures & Paiements</div>
+      <div class="table">
+        <div class="thead">
+          <div>DATE</div><div>RÉF</div><div>DESCRIPTION</div><div>MONTANT</div><div>STATUT</div><div>ACTION</div>
+        </div>
+        <div class="tbody">
+          <div class="tr">
+            <div>12/03/2025</div><div>INV‑2025‑032</div><div>Consultation</div><div>€60</div>
+            <div><span class="pill red">Impayée</span></div>
+            <div class="actions"><a href="#">Payer</a></div>
+          </div>
+          <div class="tr">
+            <div>02/03/2025</div><div>INV‑2025‑018</div><div>Analyse labo</div><div>€45</div>
+            <div><span class="pill green">Payée</span></div>
+            <div class="actions"><a href="#">Télécharger</a></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quick actions -->
+    <section class="quick-grid">
+      <a class="quick-card" routerLink="/book-appointment">
+        <span class="q-ico"></span><span class="q-text">Prendre un Rendez‑vous</span>
+      </a>
+      <a class="quick-card" routerLink="/patient/prescriptions">
+        <span class="q-ico"></span><span class="q-text">Télécharger Ordonnance</span>
+      </a>
+      <a class="quick-card" routerLink="/patient/messages">
+        <span class="q-ico"></span><span class="q-text">Contacter le Médecin</span>
+      </a>
+    </section>
+  </main>
+</div>

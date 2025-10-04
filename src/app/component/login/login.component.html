@@ -1,0 +1,53 @@
+<app-vavbar></app-vavbar>
+<div class="min-vh-100 d-flex align-items-center py-4" style="background:  rgb(0, 138, 184);">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-md-10">
+                <div class="card shadow-lg border-0 rounded-4">
+                    <div class="row g-0 align-items-center">
+
+                        <div class="col-lg-6 p-4">
+                            <h1 class="fw-bold mb-1 fs-3">Bienvenue au Clinic IQ </h1>
+                            <p class="text-secondary mb-4 small">Connectez-vous à votre compte</p>
+
+                            <form [formGroup]="form" (ngSubmit)="onSubmit()">
+                                <div class=" mb-3">
+                                    <label class="form-label">E-mail</label>
+                                    <input type="email" formControlName="email" class="form-control form-control-sm" placeholder="Entrez votre e-mail">
+                                     
+                                    <!-- text validation -->
+                                     <small class="text-danger" *ngIf="form.get('email')?.touched && form.get('email')?.hasError('required')">
+                                            L'email est requis
+                                     </small>
+
+                                     <small class="text-danger" *ngIf="form.get('email')?.touched && form.get('email')?.hasError('email')">
+                                            Entrez un email valide
+                                     </small>
+                                </div>
+
+                                <div class="mb-2">
+                                    <label class="form-label">Mot de passe</label>
+                                    <input type="password" formControlName="password" class="form-control form-control-sm" placeholder="Entrez votre mot de passe">
+
+                                    <!-- validation text -->
+                                     <small class="text-danger" *ngIf="form.get('password')?.touched && form.get('password')?.hasError('required')">
+                                            Le mot de passe est requis.
+                                     </small>
+                                </div>
+
+                                <button type="submit" class="btn-login w-100 mt-2 fw-bold btn-sm" [disabled]="form.invalid || loading">{{loading? 'connexion...':'se connecter'}}</button>
+
+                                <p *ngIf="error" class="error-message">{{error}}</p>
+                            </form>
+                        </div>
+
+                        <div class="col-lg-6 text-center p-4">
+                                    <img src="assets/doctor.png" alt="Médecin" class="img-fluid" style="max-width: 350px;">
+                                </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

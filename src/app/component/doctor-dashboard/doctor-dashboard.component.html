@@ -1,0 +1,254 @@
+<app-vavbar></app-vavbar>
+<!-- Mobile menu toggle -->
+<button class="mobile-menu-toggle" (click)="toggleMobileMenu()">
+  <span>☰</span>
+</button>
+
+<!-- Mobile overlay -->
+<div class="overlay" [class.show]="menuOpen" (click)="closeMobileMenu()"></div>
+
+<div class="layout">
+  <!-- Sidebar -->
+  <aside class="sidebar" [class.open]="menuOpen">
+    <div class="brand">Clinic <b>IQ</b></div>
+
+    <nav class="menu">
+      <a class="menu-item active" routerLink="/doctor/dashboard" (click)="closeMobileMenu()">
+        <span class="mi">📊</span><span class="label">Tableau de Bord</span>
+      </a>
+      <!-- <a class="menu-item" routerLink="/doctor/patients" (click)="closeMobileMenu()">
+        <span class="mi">👥</span><span class="label">Gestion Patients</span>
+      </a>
+      <a class="menu-item" routerLink="/doctor/appointments" (click)="closeMobileMenu()">
+        <span class="mi">📅</span><span class="label">Rendez‑vous</span>
+      </a>
+      <a class="menu-item" routerLink="/doctor/prescriptions" (click)="closeMobileMenu()">
+        <span class="mi">💊</span><span class="label">Ordonnances</span>
+      </a>
+      <a class="menu-item" routerLink="/doctor/labs" (click)="closeMobileMenu()">
+        <span class="mi">🧪</span><span class="label">Laboratoires</span>
+      </a>
+      <a class="menu-item" routerLink="/doctor/billing" (click)="closeMobileMenu()">
+        <span class="mi">💳</span><span class="label">Facturation</span>
+      </a>
+      <a class="menu-item" routerLink="/doctor/analytics" (click)="closeMobileMenu()">
+        <span class="mi">📈</span><span class="label">Analytiques</span>
+      </a>
+      <a class="menu-item" routerLink="/doctor/profile" (click)="closeMobileMenu()">
+        <span class="mi">👤</span><span class="label">Mon Profil</span>
+      </a> -->
+    </nav>
+
+    <div class="menu-footer">
+      <a class="menu-item danger" (click)="logout(); closeMobileMenu()">
+        <span class="mi">🚪</span><span class="label">Déconnexion</span>
+      </a>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="content">
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="d-md-none"></div>
+      <div class="dashboard-header">
+        <h2>Bienvenue, Dr. {{ username }} !</h2>
+      </div>
+    </header>
+
+    <!-- KPIs -->
+    <section class="kpi-row">
+      <article class="mini-card">
+        <div class="mini-head"><span>Rendez‑vous Aujourd'hui</span><span class="ico"></span></div>
+        <div class="mini-val">{{ todayAppointments }}</div>
+      </article>
+      <article class="mini-card">
+        <div class="mini-head"><span>Demandes en Attente</span><span class="ico"></span></div>
+        <div class="mini-val">{{ pendingAppointments }}</div>
+      </article>
+      <article class="mini-card">
+        <div class="mini-head"><span>Nouveaux Résultats Labo</span><span class="ico"></span></div>
+        <div class="mini-val">{{ newLabResults }}</div>
+      </article>
+    </section>
+
+    <!-- Success/Error Messages -->
+    <div *ngIf="successMessage" class="alert alert-success text-center border-0 shadow-sm mb-3">
+      🎉 {{ successMessage }}
+    </div>
+    <div *ngIf="error" class="alert alert-danger text-center border-0 shadow-sm mb-3">
+      ❌ {{ error }}
+    </div>
+
+    <!-- Upcoming appointments -->
+    <section class="card">
+      <div class="card-title">Prochains Rendez‑vous d'Aujourd'hui</div>
+      <div *ngIf="loading" class="text-center p-3">
+        <p>Chargement des rendez-vous...</p>
+      </div>
+      <div *ngIf="error" class="text-danger p-3">
+        <p>{{ error }}</p>
+      </div>
+      <div class="table-wrapper" *ngIf="!loading && !error">
+        <div class="table">
+          <div class="thead">
+            <div>HEURE</div><div>PATIENT</div><div>MOTIF</div><div>STATUT</div><div>ACTIONS</div><div>NOTES</div>
+          </div>
+          <div class="tbody">
+            <div class="tr" *ngFor="let appointment of appointments">
+              <div data-label="Heure">{{ formatDate(appointment.date) }}</div>
+              <div data-label="Patient">
+                <strong>{{ appointment.patientName || ('Patient ' + appointment.patientId) }}</strong>
+                <br><small class="text-muted">{{ appointment.patientEmail || '' }}</small>
+              </div>
+              <div data-label="Motif">Consultation</div>
+              <div data-label="Statut"><span class="pill" [ngClass]="getStatusClass(appointment.status)">{{ appointment.status }}</span></div>
+              <div data-label="Actions" class="actions">
+                <a href="#" (click)="viewPatientDetails(appointment.patientName || ('Patient ' + appointment.patientId))">Dossier</a> • 
+                <a href="#" (click)="addConsultationNotes('appointment' + appointment.id)">Consultation</a>
+              </div>
+              <div data-label="Notes" class="actions">
+                <a href="#">Ajouter Notes</a>
+              </div>
+            </div>
+            <div class="tr" *ngIf="appointments.length === 0">
+              <div colspan="6" class="text-center text-muted p-3">Aucun rendez-vous confirmé aujourd'hui</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pending appointment requests -->
+    <section class="card">
+      <div class="card-title">📍 Demandes de Rendez‑vous en Attente</div>
+      
+      <!-- Debug Info for Dr. Farid -->
+      <div *ngIf="username && username.toLowerCase().includes('farid')" class="alert alert-info mb-3">
+        🔍 <strong>Mode Debug pour Dr. Farid:</strong>
+        <br>• Vérifiez les logs de la console (F12)
+        <br>• Vérifiez les logs du backend
+        <br>• Total demandes: {{ pendingRequests.length }}
+      </div>
+      
+      <div class="table-wrapper" *ngIf="pendingRequests.length > 0; else noPendingRequests">
+        <div class="table">
+          <div class="thead">
+            <div>DATE/HEURE</div><div>PATIENT</div><div>MOTIF</div><div>CONTACT</div><div>DÉCISION</div><div>DEBUG</div>
+          </div>
+          <div class="tbody">
+            <div class="tr" *ngFor="let request of pendingRequests; let i = index">
+              <div data-label="Date/Heure">
+                <strong>{{ request.dateTime }}</strong>
+              </div>
+              <div data-label="Patient">
+                <strong>{{ request.patient }}</strong>
+                <br><small class="text-muted">ID: {{ request.appointmentData.patientId }}</small>
+              </div>
+              <div data-label="Motif">
+                <span class="badge bg-info">{{ request.reason }}</span>
+              </div>
+              <div data-label="Contact">
+                <small class="text-muted">{{ request.patientEmail || 'Email non disponible' }}</small>
+                <br><a href="#" (click)="viewPatientDetails(request.patient)" class="btn btn-sm btn-outline-info">Voir Dossier</a>
+              </div>
+              <div data-label="Décision" class="actions">
+                <button class="btn btn-sm btn-success me-2" (click)="approveAppointment(request.appointmentData.id)">
+                  ✅ Accepter
+                </button>
+                <button class="btn btn-sm btn-danger" (click)="rejectAppointment(request.appointmentData.id)">
+                  ❌ Refuser
+                </button>
+              </div>
+              <div data-label="Debug" *ngIf="username && username.toLowerCase().includes('farid')">
+                <small class="text-muted">
+                  Apt: {{ request.appointmentData.id }}<br>
+                  Dr: {{ request.appointmentData.doctorId }}
+                </small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <ng-template #noPendingRequests>
+        <div class="text-center p-4">
+          <div class="h5 text-muted">🎉 Aucune demande en attente</div>
+          <p class="text-muted">Toutes vos demandes de rendez-vous ont été traitées!</p>
+          
+          <!-- Enhanced debug info when no requests found -->
+          <div *ngIf="username && username.toLowerCase().includes('farid')" class="alert alert-warning mt-3">
+            <strong>Debug Dr. Farid:</strong> Aucune demande trouvée.<br>
+            <small>Vérifiez que:</small>
+            <ul class="text-start mt-2">
+              <li>Des patients ont réservé des rendez-vous avec Dr. Farid</li>
+              <li>L'email d'authentification correspond à celui en base</li>
+              <li>Les rendez-vous sont en statut PENDING</li>
+            </ul>
+          </div>
+        </div>
+      </ng-template>
+    </section>
+
+    <!-- Recent prescriptions -->
+    <!-- <section class="card">
+      <div class="card-title">Ordonnances Récentes</div>
+      <ul class="list">
+        <li *ngFor="let prescription of recentPrescriptions">
+          <span><b>{{ prescription.patient }}</b> — {{ prescription.medication }} ({{ prescription.date }})</span>
+          <span class="pill" [ngClass]="prescription.statusClass">{{ prescription.status }}</span>
+        </li>
+      </ul>
+    </section> -->
+
+    <!-- Quick stats -->
+    <!-- <section class="card">
+      <div class="card-title">Statistiques Rapides</div>
+      <div class="table-wrapper">
+        <div class="table">
+          <div class="thead">
+            <div>MÉTRIQUE</div><div>AUJOURD'HUI</div><div>CETTE SEMAINE</div><div>CE MOIS</div><div>TENDANCE</div><div></div>
+          </div>
+          <div class="tbody">
+            <div class="tr">
+              <div data-label="Métrique">Consultations</div>
+              <div data-label="Aujourd'hui">{{ todayAppointments }}</div>
+              <div data-label="Cette semaine">35</div>
+              <div data-label="Ce mois">142</div>
+              <div data-label="Tendance"><span class="pill green">+12%</span></div>
+              <div></div>
+            </div>
+            <div class="tr">
+              <div data-label="Métrique">Nouveaux Patients</div>
+              <div data-label="Aujourd'hui">3</div>
+              <div data-label="Cette semaine">18</div>
+              <div data-label="Ce mois">67</div>
+              <div data-label="Tendance"><span class="pill blue">+8%</span></div>
+              <div></div>
+            </div>
+            <div class="tr">
+              <div data-label="Métrique">Prescriptions</div>
+              <div data-label="Aujourd'hui">5</div>
+              <div data-label="Cette semaine">28</div>
+              <div data-label="Ce mois">98</div>
+              <div data-label="Tendance"><span class="pill green">+15%</span></div>
+              <div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section> -->
+
+    <!-- Quick actions -->
+    <!-- <section class="quick-grid">
+      <a class="quick-card" routerLink="/doctor/patients">
+        <span class="q-ico"></span><span class="q-text">Consulter Dossiers Patients</span>
+      </a>
+      <a class="quick-card" href="#" (click)="addConsultationNotes('')">
+        <span class="q-ico"></span><span class="q-text">Ajouter une Consultation</span>
+      </a>
+      <a class="quick-card" routerLink="/doctor/labs">
+        <span class="q-ico"></span><span class="q-text">Voir Résultats Laboratoires</span>
+      </a>
+    </section> -->
+  </main>
+</div>

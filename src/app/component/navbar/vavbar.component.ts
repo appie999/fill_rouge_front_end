@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import { Router, RouterLink, RouterModule } from "../../../../node_modules/@angular/router/router_module.d-Bx9ArA6K";
 import { CommonModule } from '@angular/common';
 import { AuthServiceService } from '../../services/auth-service'; 
+import { Router, RouterModule } from '@angular/router';
 @Component({
   selector: 'app-vavbar',
   standalone: true,
@@ -12,6 +12,7 @@ import { AuthServiceService } from '../../services/auth-service';
 export class VavbarComponent {
 
   menuOpen = false;
+  token = localStorage.getItem('token');
 
   constructor(public auth: AuthServiceService, private router: Router) {}
 
@@ -25,7 +26,7 @@ export class VavbarComponent {
   }
 
   getDashboardRoute(): string {
-    const role = this.auth.getRole();
+    const role = this.auth.getRole(this.token);
 
     switch(role){
 
@@ -41,7 +42,7 @@ export class VavbarComponent {
   }
 
   getUserRoleText(): string {
-    const role = this.auth.getRole();
+    const role = this.auth.getRole(this.token);
 
     switch(role){
 

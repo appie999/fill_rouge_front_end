@@ -10,8 +10,5 @@ export interface RegisterRequest {
 
 
 export interface AuthResponse {
-  token: string;
-  role: 'ADMIN' | 'DOCTOR' | 'PATIENT';
-  userName: string;
-  userId?: number; 
+  token: string; 
 }

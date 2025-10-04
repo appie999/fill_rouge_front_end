@@ -146,14 +146,14 @@
 }
 
 .btn-register {
-  background: linear-gradient(135deg, #28a745, #20c997);
+  background: linear-gradient(135deg, #2850a7, #2077c9);
   color: white;
-  box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+  box-shadow: 0 4px 15px rgba(40, 99, 167, 0.3);
 }
 
 .btn-register:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+  box-shadow: 0 4px 15px rgba(40, 99, 167, 0.3);
 }
 
 .btn-login {
@@ -180,6 +180,11 @@
 .btn-icon {
   font-size: 14px;
   flex-shrink: 0;
+}
+
+.emergency-text {
+  font-weight: 700;
+  color: #dc3545;
 }
 
 .user-section {

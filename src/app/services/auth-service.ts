@@ -4,6 +4,10 @@ import { Route, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { AuthResponse, RegisterRequest } from '../model/auth.model';
 
+import {jwtDecode } from 'jwt-decode';
+import { AuthToken } from '../model/AuthToken';
+
+
 @Injectable({
   providedIn: 'root'
 })
@@ -12,6 +16,8 @@ export class AuthServiceService {
   private apiUrl = "http://localhost:8080/auth"
 
   constructor(private http: HttpClient, private router: Router) { }
+
+  token: string | null = localStorage.getItem('token');
 
 
   login( email: string, password: string):Observable <AuthResponse> {
@@ -23,19 +29,18 @@ export class AuthServiceService {
   }
 
 
-  saveAuthData(token: string, role: string, username?: string){
+  saveAuthData(token: string){
     localStorage.setItem('token', token);
-    localStorage.setItem('role', role);
-    if(username){
-      localStorage.setItem('username', username);
-    }
   }
 
-getUserName(): string | null {
-  return localStorage.getItem('username');
-}
+  getUserName(): string | null {
 
-logout(){
+    const decodedToken = this.getDecodedToken(this.token);
+    
+    return `${decodedToken?.firstName} ${decodedToken?.lastName}`.trim() || "user";
+  }
+
+  logout(){
     localStorage.removeItem('token');
     localStorage.removeItem('role');
     localStorage.removeItem('username');
@@ -46,12 +51,28 @@ logout(){
     return !!localStorage.getItem('token');
   }
 
-  getRole(): string | null {
-    return localStorage.getItem('role');
+  getRole(token: string | null): string | null {
+    return this.getDecodedToken(token)?.role || null;
   }
 
   hasRole(role: string): boolean {
-    return (this.getRole() || '').toUpperCase() === role.toUpperCase();
+    const token = localStorage.getItem('token');
+    return (this.getRole( token ) || '').toUpperCase() === role.toUpperCase();
+  }
+
+  getDecodedToken ( token: string | null ) {
+    return token ? jwtDecode<AuthToken>( token ) : null;
+  }
+
+  isTokenExpired ( token: string | null ): boolean {
+    if (token) {
+      const decoded: any = jwtDecode(token)
+      const decodedExpDate = decoded.exp;
+      const currentDate = Date.now() / 1000;
+
+      return decodedExpDate < currentDate;
+    }
+    return true;
   }
 
 }

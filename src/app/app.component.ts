@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { HomeComponent } from "./component/home/home.component";
+import { DoctorDashboardComponent } from "./component/doctor-dashboard/doctor-dashboard.component";
+import { PatientDashboardComponent } from "./component/patient-dashboard/patient-dashboard.component";
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, HomeComponent],
+  imports: [ PatientDashboardComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
