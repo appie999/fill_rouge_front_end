@@ -1,0 +1,22 @@
+.appointment-container {
+  background: linear-gradient(to right, #008ab8, #00b4d8);
+}
+
+.card h2 {
+  color: #008ab8;
+  font-weight: 700;
+}
+
+.btn-appointment {
+  background-color: #008ab8;
+  color: #fff;
+  font-weight: 600;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
+}
+
+.btn-appointment:hover {
+  background-color: #006f94;
+}

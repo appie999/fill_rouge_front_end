@@ -16,7 +16,7 @@
       <a class="menu-item active" routerLink="/doctor/dashboard" (click)="closeMobileMenu()">
         <span class="mi">📊</span><span class="label">Tableau de Bord</span>
       </a>
-      <!-- <a class="menu-item" routerLink="/doctor/patients" (click)="closeMobileMenu()">
+      <a class="menu-item" routerLink="/doctor/patients" (click)="closeMobileMenu()">
         <span class="mi">👥</span><span class="label">Gestion Patients</span>
       </a>
       <a class="menu-item" routerLink="/doctor/appointments" (click)="closeMobileMenu()">
@@ -36,7 +36,7 @@
       </a>
       <a class="menu-item" routerLink="/doctor/profile" (click)="closeMobileMenu()">
         <span class="mi">👤</span><span class="label">Mon Profil</span>
-      </a> -->
+      </a>
     </nav>
 
     <div class="menu-footer">
@@ -189,8 +189,8 @@
       </ng-template>
     </section>
 
-    <!-- Recent prescriptions -->
-    <!-- <section class="card">
+    Recent prescriptions 
+    <section class="card">
       <div class="card-title">Ordonnances Récentes</div>
       <ul class="list">
         <li *ngFor="let prescription of recentPrescriptions">
@@ -198,10 +198,10 @@
           <span class="pill" [ngClass]="prescription.statusClass">{{ prescription.status }}</span>
         </li>
       </ul>
-    </section> -->
+    </section> 
 
-    <!-- Quick stats -->
-    <!-- <section class="card">
+    Quick stats 
+    <section class="card">
       <div class="card-title">Statistiques Rapides</div>
       <div class="table-wrapper">
         <div class="table">
@@ -236,10 +236,10 @@
           </div>
         </div>
       </div>
-    </section> -->
+    </section> 
 
-    <!-- Quick actions -->
-    <!-- <section class="quick-grid">
+     Quick actions 
+    <section class="quick-grid">
       <a class="quick-card" routerLink="/doctor/patients">
         <span class="q-ico"></span><span class="q-text">Consulter Dossiers Patients</span>
       </a>
@@ -249,6 +249,6 @@
       <a class="quick-card" routerLink="/doctor/labs">
         <span class="q-ico"></span><span class="q-text">Voir Résultats Laboratoires</span>
       </a>
-    </section> -->
+    </section> 
   </main>
 </div>

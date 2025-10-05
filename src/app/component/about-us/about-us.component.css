@@ -1,0 +1,110 @@
+
+
+.container { width: min(1100px, 100%); margin: 0 auto; padding: 0 16px; }
+.row { display: grid; grid-template-columns: 1.1fr .9fr; gap: 24px; }
+.col { display: block; }
+
+/* ===== HERO ===== */
+.about-hero {
+  background: linear-gradient(90deg, rgb(66, 133, 155) 60%, rgba(93, 147, 165, 0.632) 100%);
+  padding: 56px 0;
+}
+.text-col { align-self: center; max-width: 560px;color: #f8fafc; }
+.eyebrow { letter-spacing: .6px; opacity: .9; margin: 0 0 8px; font-size: 14px; color: #f8fafc;}
+.title {
+  margin: 0 0 10px;
+  font-size: clamp(28px, 4.8vw, 44px);
+  line-height: 1.15;
+  font-weight: 800;
+  color: #f8fafc;
+}
+.lead { margin: 10px 0 18px; font-size: 16px; opacity: .95; }
+.btn {
+  display: inline-block;
+  background: #026b85;
+  font-weight: 800;
+  border-radius: 12px;
+  padding: 10px 16px;
+  color:chartreuse ;
+}
+.image-col { display: grid; place-items: center; }
+.image-col img { max-width: 520px; width: 100%; height: auto; }
+
+/* ===== VALUES ===== */
+.about-values { background: #f8fafc; padding: 38px 0 54px; color: var(--ink); }
+.section-title {
+  text-align: center;
+  margin-bottom: 18px;
+  font-size: clamp(22px, 3.5vw, 28px);
+  font-weight: 800;
+}
+.cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+.card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 18px;
+  box-shadow: 0 10px 24px rgba(0,0,0,.06);
+}
+.card .icon {
+  width: 44px; height: 44px;
+  border-radius: 12px;
+  background: rgba(0,138,184,.12);
+  color: var(--brand);
+  display: grid; place-items: center;
+  font-size: 20px; margin-bottom: 8px;
+}
+
+/* ===== TEAM SECTION ===== */
+.team-section {
+  padding: 50px 0;
+  background: white;
+  text-align: center;
+}
+.team-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-top: 20px;
+}
+.doctor-card {
+  background: #fff;
+  padding: 16px;
+  border-radius: 14px;
+  box-shadow: 0 8px 18px rgba(0,0,0,.08);
+  transition: transform .2s ease;
+}
+.doctor-card:hover { transform: translateY(-4px); }
+.doctor-card img {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin-bottom: 10px;
+}
+.doctor-card h3 {
+  margin: 0 0 4px;
+  font-size: 16px;
+  font-weight: 800;
+}
+.doctor-card p {
+  margin: 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.imgabout{
+  border-radius: 20px;
+} 
+
+/* ===== Responsive ===== */
+@media (max-width: 992px) {
+  .row { grid-template-columns: 1fr; }
+  .image-col { order: -1; }
+}
+@media (max-width: 640px) {
+  .cards, .team-cards { grid-template-columns: 1fr; }
+}

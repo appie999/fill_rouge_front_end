@@ -1,1 +1,84 @@
-<p>book-appointment works!</p>
+<app-vavbar></app-vavbar>
+<div class="appointment-container d-flex align-items-center justify-content-center min-vh-100">
+  <div class="card shadow-lg p-4 rounded-4" style="max-width: 600px; width: 100%;">
+    <h2 class="text-center mb-3">📅 Prendre un Rendez-vous</h2>
+    <p class="text-muted text-center mb-4">Choisissez un médecin et une date pour votre rendez-vous</p>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" (ngchange)="clearMessages()">
+      <div class="mb-3">
+        <label for="doctorId" class="form-label">🩺 Médecin *</label>
+        <select id="doctorId" formControlName="doctorId" class="form-control" (change)="clearMessages()">
+          <option value="">{{ loadingDoctors ? 'Chargement des médecins...' : (doctors.length === 0 ? 'Aucun médecin disponible' : 'Sélectionnez un médecin') }}</option>
+          @for (doctor of doctors; track doctor.id) {
+            <option [value]="doctor.id">{{ doctor.name }} - {{ doctor.speciality }}</option>
+          }
+        </select>
+        
+        <!-- Status info -->
+        <small class="text-muted d-block" *ngIf="!loadingDoctors && doctors.length > 0">
+          {{ doctors.length }} médecin(s) disponible(s)
+        </small>
+        
+        <small class="text-warning d-block" *ngIf="!loadingDoctors && doctors.length === 0 && !error">
+          Aucun médecin trouvé dans la base de données
+        </small>
+        
+        <small class="text-danger" *ngIf="form.get('doctorId')?.invalid && form.get('doctorId')?.touched">
+           Veuillez sélectionner un médecin
+        </small>
+      </div>
+
+      <!-- Date -->
+      <div class="mb-3">
+        <label for="date" class="form-label"> Date du Rendez-vous *</label>
+        <input type="date" id="date" formControlName="date"
+               class="form-control" (change)="clearMessages()">
+        <small class="text-muted">Veuillez sélectionner une date à partir d'aujourd'hui</small>
+        <small class="text-danger d-block" *ngIf="form.get('date')?.invalid && form.get('date')?.touched">
+           La date est obligatoire
+        </small>
+      </div>
+
+      <!-- Reason -->
+      <div class="mb-3">
+        <label for="reason" class="form-label">💬 Motif de la consultation *</label>
+        <textarea id="reason" formControlName="reason" class="form-control" rows="3" 
+                  placeholder="Décrivez brièvement le motif de votre consultation..." 
+                  (input)="clearMessages()"></textarea>
+        <small class="text-muted">Exemple: Consultation générale, contrôle médical, problème spécifique...</small>
+        <small class="text-danger d-block" *ngIf="form.get('reason')?.invalid && form.get('reason')?.touched">
+           Le motif de consultation est obligatoire
+        </small>
+      </div>
+
+      <!-- Bouton -->
+      <button type="submit" class="btn btn-appointment w-100 mt-3" [disabled]="form.invalid || loading || loadingDoctors">
+        <span *ngIf="loading"> Réservation en cours...</span>
+        <span *ngIf="!loading">✅ Réserver mon Rendez-vous</span>
+      </button>
+    </form>
+
+    <!-- Messages -->
+    <div *ngIf="success" class="alert alert-success mt-3 text-center border-0 shadow-sm">
+        <div class="h5 mb-2"> <strong>Parfait!</strong></div>
+        <p class="mb-2">{{ success }}</p>
+        <small class="text-muted">Redirection automatique vers votre tableau de bord...</small>
+    </div>
+    
+    <div *ngIf="error" class="alert alert-danger mt-3 text-center border-0 shadow-sm">
+        <div class="h6 mb-2"> <strong>Oops!</strong></div>
+        <p class="mb-0">{{ error }}</p>
+    </div>
+    
+    <div *ngIf="result && !success" class="alert alert-info mt-3 text-center border-0 shadow-sm">
+        <strong> Détails de votre réservation:</strong><br>
+        <small>ID: {{ result.id }} | Date: {{ formatDate(result.date) }} | Statut: {{ result.status }}</small>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="text-center mt-4" *ngIf="!loading">
+      <button type="button" class="btn btn-outline-primary btn-sm me-2" (click)="router.navigate(['/patient/dashboard'])"> Retour au Tableau de Bord</button>
+      <button type="button" class="btn btn-outline-secondary btn-sm" (click)="form.reset(); clearMessages()"> Nouveau Rendez-vous</button>
+    </div>
+  </div>
+</div>

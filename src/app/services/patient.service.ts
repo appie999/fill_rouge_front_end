@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
@@ -20,13 +20,27 @@ export interface Doctor {
   providedIn: 'root'
 })
 export class PatientService {
-  private apiUrl = 'http://localhost:8081/patient';
-  private base = 'http://localhost:8081/api/patient/';
+  private apiUrl = 'http://localhost:8080/patient';
+  private base = 'http://localhost:8080/patient/appointments';
 
   constructor(private http: HttpClient) { }
 
+  // Get authentication headers
+  private getAuthHeaders(): HttpHeaders {
+    const token = localStorage.getItem('token');
+    if (token) {
+      return new HttpHeaders({
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      });
+    }
+    return new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+  }
+
   getAllPatients(): Observable<Patient[]> {
-    return this.http.get<Patient[]>(`${this.apiUrl}/`);
+    return this.http.get<Patient[]>(`${this.apiUrl}`);
   }
 
   getPatientById(id: number): Observable<Patient> {
@@ -45,27 +59,27 @@ export class PatientService {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
-  bookAppointment(p:{ doctorId:number; date:string }) {
-    console.log('PatientService: Booking appointment to:', `${this.base}appointments`);
-    return this.http.post(`${this.base}appointments`, p);
+  bookAppointment(p:{ doctorId:number; date:string; reason?:string }) {
+    console.log('PatientService: Booking appointment to:', `${this.base}`);
+    return this.http.post(`${this.base}`, p, { headers: this.getAuthHeaders() });
   }
 
   getDoctorsNames(): Observable<any[]> {
-    return this.http.get<any[]>("http://localhost:8081/doctor/doctor-names");
+    return this.http.get<any[]>("http://localhost:8080/doctor/doctor-names", { headers: this.getAuthHeaders() });
   }
 
   getDoctors(): Observable<any[]> {
-    return this.http.get<any[]>("http://localhost:8081/doctor/doctor-names");
+    return this.http.get<any[]>("http://localhost:8080/doctor/doctor-names", { headers: this.getAuthHeaders() });
   }
 
   // Get patient's appointments
   getMyAppointments(): Observable<any[]> {
-    console.log('PatientService: Fetching appointments from:', `${this.base}appointments`);
-    return this.http.get<any[]>(`${this.base}appointments`);
+    console.log('PatientService: Fetching appointments from:', `${this.base}`);
+    return this.http.get<any[]>(`${this.base}`, { headers: this.getAuthHeaders() });
   }
 
   // Cancel appointment
   cancelAppointment(appointmentId: number): Observable<void> {
-    return this.http.delete<void>(`${this.base}appointments/${appointmentId}`);
+    return this.http.delete<void>(`${this.base}/${appointmentId}`, { headers: this.getAuthHeaders() });
   }
 }

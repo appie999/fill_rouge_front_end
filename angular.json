@@ -21,10 +21,8 @@
             ],
             "tsConfig": "tsconfig.app.json",
             "assets": [
-
-               "src/favicon.ico",
-                "src/assets"
-           
+              "src/favicon.ico",
+              "src/assets"
             ],
             "styles": [
               "src/styles.css",
@@ -42,8 +40,8 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "4kB",
-                  "maximumError": "8kB"
+                  "maximumWarning": "10kB",
+                  "maximumError": "15kB"
                 }
               ],
               "outputHashing": "all"
@@ -63,7 +61,8 @@
               "buildTarget": "clinique:build:production"
             },
             "development": {
-              "buildTarget": "clinique:build:development"
+              "buildTarget": "clinique:build:development",
+              "proxyConfig": "proxy.conf.json"
             }
           },
           "defaultConfiguration": "development"
@@ -80,10 +79,8 @@
             ],
             "tsConfig": "tsconfig.spec.json",
             "assets": [
-              
-                "src/favicon.ico",
-                "src/assets",
-              
+              "src/favicon.ico",
+              "src/assets",
               {
                 "glob": "**/*",
                 "input": "public"
@@ -94,11 +91,23 @@
             ],
             "scripts": []
           }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "src/**/*.ts",
+              "src/**/*.html"
+            ]
+          }
         }
       }
     }
   },
   "cli": {
-    "analytics": "1d4ffb7b-9420-4944-9b78-d3f292d266ea"
+    "analytics": "1d4ffb7b-9420-4944-9b78-d3f292d266ea",
+    "schematicCollections": [
+      "angular-eslint"
+    ]
   }
 }

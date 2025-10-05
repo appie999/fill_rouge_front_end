@@ -1,10 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Route, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { AuthResponse, RegisterRequest } from '../model/auth.model';
-
-import {jwtDecode } from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 import { AuthToken } from '../model/AuthToken';
 
 
@@ -20,11 +19,20 @@ export class AuthServiceService {
   token: string | null = localStorage.getItem('token');
 
 
-  login( email: string, password: string):Observable <AuthResponse> {
-    return this.http.post <AuthResponse> (`${this.apiUrl}/login`, {email, password});
+  login(email: string, password: string): Observable<AuthResponse> {
+    console.log('Attempting login with backend API for:', email);
+    
+    // Real API call to backend
+    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, {
+      email: email,
+      password: password
+    });
   }
 
-  register(payload: RegisterRequest){
+  register(payload: RegisterRequest): Observable<AuthResponse> {
+    console.log('Attempting registration with backend API for:', payload.email);
+    
+    // Real API call to backend
     return this.http.post<AuthResponse>(`${this.apiUrl}/register`, payload);
   }
 

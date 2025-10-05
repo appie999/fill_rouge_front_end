@@ -1,14 +1,14 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthServiceService } from '../../services/auth-service';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { AuthResponse } from '../../model/auth.model';
 import { CommonModule } from '@angular/common';
 import { VavbarComponent } from "../navbar/vavbar.component";
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, VavbarComponent],
+  imports: [ReactiveFormsModule, CommonModule, RouterModule, VavbarComponent],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
@@ -51,9 +51,17 @@ export class LoginComponent implements OnInit {
       next: (res: AuthResponse) => {
         this.auth.saveAuthData(res.token);
         
-        // if (res.role === 'DOCTOR') {
-        //   this.router.navigate(['/doctor/dashboard']);
-        // }else this.router.navigate(['/patient/dashboard']);
+        // Get user role and redirect accordingly
+        const userRole = this.auth.getRole(res.token);
+        console.log('User role:', userRole);
+        
+        if (userRole === 'DOCTOR') {
+          this.router.navigate(['/doctor/dashboard']);
+        } else if (userRole === 'PATIENT') {
+          this.router.navigate(['/patient/dashboard']);
+        } else {
+          this.router.navigate(['/home']);
+        }
       },
       error: (errorReponse)  => {
         console.error('Login error:', errorReponse);

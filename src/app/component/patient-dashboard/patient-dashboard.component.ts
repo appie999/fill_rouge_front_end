@@ -10,7 +10,7 @@ import { PatientService } from '../../services/patient.service';
   standalone:true,
   imports: [CommonModule, RouterModule, VavbarComponent],
   templateUrl: './patient-dashboard.component.html',
-  styleUrl: '././patient-dashboard.component.html'
+  styleUrl: './patient-dashboard.component.css'
 })
 export class PatientDashboardComponent implements OnInit {
 
