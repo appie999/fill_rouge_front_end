@@ -16,34 +16,7 @@
       <a class="menu-item active" routerLink="/doctor/dashboard" (click)="closeMobileMenu()">
         <span class="mi">📊</span><span class="label">Tableau de Bord</span>
       </a>
-      <a class="menu-item" routerLink="/doctor/patients" (click)="closeMobileMenu()">
-        <span class="mi">👥</span><span class="label">Gestion Patients</span>
-      </a>
-      <a class="menu-item" routerLink="/doctor/appointments" (click)="closeMobileMenu()">
-        <span class="mi">📅</span><span class="label">Rendez‑vous</span>
-      </a>
-      <a class="menu-item" routerLink="/doctor/prescriptions" (click)="closeMobileMenu()">
-        <span class="mi">💊</span><span class="label">Ordonnances</span>
-      </a>
-      <a class="menu-item" routerLink="/doctor/labs" (click)="closeMobileMenu()">
-        <span class="mi">🧪</span><span class="label">Laboratoires</span>
-      </a>
-      <a class="menu-item" routerLink="/doctor/billing" (click)="closeMobileMenu()">
-        <span class="mi">💳</span><span class="label">Facturation</span>
-      </a>
-      <a class="menu-item" routerLink="/doctor/analytics" (click)="closeMobileMenu()">
-        <span class="mi">📈</span><span class="label">Analytiques</span>
-      </a>
-      <a class="menu-item" routerLink="/doctor/profile" (click)="closeMobileMenu()">
-        <span class="mi">👤</span><span class="label">Mon Profil</span>
-      </a>
     </nav>
-
-    <div class="menu-footer">
-      <a class="menu-item danger" (click)="logout(); closeMobileMenu()">
-        <span class="mi">🚪</span><span class="label">Déconnexion</span>
-      </a>
-    </div>
   </aside>
 
   <!-- Main -->
@@ -188,67 +161,5 @@
         </div>
       </ng-template>
     </section>
-
-    Recent prescriptions 
-    <section class="card">
-      <div class="card-title">Ordonnances Récentes</div>
-      <ul class="list">
-        <li *ngFor="let prescription of recentPrescriptions">
-          <span><b>{{ prescription.patient }}</b> — {{ prescription.medication }} ({{ prescription.date }})</span>
-          <span class="pill" [ngClass]="prescription.statusClass">{{ prescription.status }}</span>
-        </li>
-      </ul>
-    </section> 
-
-    Quick stats 
-    <section class="card">
-      <div class="card-title">Statistiques Rapides</div>
-      <div class="table-wrapper">
-        <div class="table">
-          <div class="thead">
-            <div>MÉTRIQUE</div><div>AUJOURD'HUI</div><div>CETTE SEMAINE</div><div>CE MOIS</div><div>TENDANCE</div><div></div>
-          </div>
-          <div class="tbody">
-            <div class="tr">
-              <div data-label="Métrique">Consultations</div>
-              <div data-label="Aujourd'hui">{{ todayAppointments }}</div>
-              <div data-label="Cette semaine">35</div>
-              <div data-label="Ce mois">142</div>
-              <div data-label="Tendance"><span class="pill green">+12%</span></div>
-              <div></div>
-            </div>
-            <div class="tr">
-              <div data-label="Métrique">Nouveaux Patients</div>
-              <div data-label="Aujourd'hui">3</div>
-              <div data-label="Cette semaine">18</div>
-              <div data-label="Ce mois">67</div>
-              <div data-label="Tendance"><span class="pill blue">+8%</span></div>
-              <div></div>
-            </div>
-            <div class="tr">
-              <div data-label="Métrique">Prescriptions</div>
-              <div data-label="Aujourd'hui">5</div>
-              <div data-label="Cette semaine">28</div>
-              <div data-label="Ce mois">98</div>
-              <div data-label="Tendance"><span class="pill green">+15%</span></div>
-              <div></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section> 
-
-     Quick actions 
-    <section class="quick-grid">
-      <a class="quick-card" routerLink="/doctor/patients">
-        <span class="q-ico"></span><span class="q-text">Consulter Dossiers Patients</span>
-      </a>
-      <a class="quick-card" href="#" (click)="addConsultationNotes('')">
-        <span class="q-ico"></span><span class="q-text">Ajouter une Consultation</span>
-      </a>
-      <a class="quick-card" routerLink="/doctor/labs">
-        <span class="q-ico"></span><span class="q-text">Voir Résultats Laboratoires</span>
-      </a>
-    </section> 
   </main>
 </div>

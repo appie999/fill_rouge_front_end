@@ -10,11 +10,10 @@
         <select id="doctorId" formControlName="doctorId" class="form-control" (change)="clearMessages()">
           <option value="">{{ loadingDoctors ? 'Chargement des médecins...' : (doctors.length === 0 ? 'Aucun médecin disponible' : 'Sélectionnez un médecin') }}</option>
           @for (doctor of doctors; track doctor.id) {
-            <option [value]="doctor.id">{{ doctor.name }} - {{ doctor.speciality }}</option>
+            <option [value]="doctor.id">{{ doctor.name }}</option>
           }
         </select>
         
-        <!-- Status info -->
         <small class="text-muted d-block" *ngIf="!loadingDoctors && doctors.length > 0">
           {{ doctors.length }} médecin(s) disponible(s)
         </small>
@@ -28,7 +27,6 @@
         </small>
       </div>
 
-      <!-- Date -->
       <div class="mb-3">
         <label for="date" class="form-label"> Date du Rendez-vous *</label>
         <input type="date" id="date" formControlName="date"
@@ -39,7 +37,6 @@
         </small>
       </div>
 
-      <!-- Reason -->
       <div class="mb-3">
         <label for="reason" class="form-label">💬 Motif de la consultation *</label>
         <textarea id="reason" formControlName="reason" class="form-control" rows="3" 
@@ -51,14 +48,12 @@
         </small>
       </div>
 
-      <!-- Bouton -->
       <button type="submit" class="btn btn-appointment w-100 mt-3" [disabled]="form.invalid || loading || loadingDoctors">
         <span *ngIf="loading"> Réservation en cours...</span>
         <span *ngIf="!loading">✅ Réserver mon Rendez-vous</span>
       </button>
     </form>
 
-    <!-- Messages -->
     <div *ngIf="success" class="alert alert-success mt-3 text-center border-0 shadow-sm">
         <div class="h5 mb-2"> <strong>Parfait!</strong></div>
         <p class="mb-2">{{ success }}</p>
@@ -75,7 +70,6 @@
         <small>ID: {{ result.id }} | Date: {{ formatDate(result.date) }} | Statut: {{ result.status }}</small>
     </div>
 
-    <!-- Quick Actions -->
     <div class="text-center mt-4" *ngIf="!loading">
       <button type="button" class="btn btn-outline-primary btn-sm me-2" (click)="router.navigate(['/patient/dashboard'])"> Retour au Tableau de Bord</button>
       <button type="button" class="btn btn-outline-secondary btn-sm" (click)="form.reset(); clearMessages()"> Nouveau Rendez-vous</button>

@@ -34,6 +34,7 @@ export class RegisterComponent {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       this.error = 'Veuillez remplir tous les champs obligatoires.';
+      this.loading = false; // Reset loading state for invalid forms
       return;
     }
 

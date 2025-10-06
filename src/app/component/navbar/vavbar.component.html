@@ -27,7 +27,7 @@
       </a>
     </div>
 
-    <div class="nav-section" *ngIf="auth.isLoggedIn()">
+    <div class="nav-section" *ngIf="isAuthenticated">
       <a [routerLink]="getDashboardRoute()" routerLinkActive="active" (click)="closeMobileMenu()" class="nav-link dashboard-link">
         <span class="nav-icon"></span>
         <span class="nav-text">Dashboard</span>
@@ -39,7 +39,7 @@
     </div>
 
     <div class="auth-buttons">
-      <div class="auth-section" *ngIf="!auth.isLoggedIn()">
+      <div class="auth-section" *ngIf="!isAuthenticated || showAuthButtons" (click)="hideAuthButtons()" >
         <a routerLink="/auth/register" (click)="closeMobileMenu()" class="btn btn-register">
           <span class="btn-icon"></span>
           <span class="btn-text">Register</span>
@@ -50,7 +50,7 @@
         </a>
       </div>
       
-      <div class="user-section" *ngIf="auth.isLoggedIn()">
+      <div class="user-section" *ngIf="isAuthenticated">
         <div class="user-info">
           <div class="user-avatar">
             <span class="avatar-icon"></span>
@@ -60,15 +60,15 @@
             <span class="user-role">{{ getUserRoleText() }}</span>
           </div>
         </div>
-        <!-- <button (click)="logout()" class="btn btn-logout">
+        <button (click)="logout()" class="btn btn-logout">
           <span class="btn-icon"></span>
           <span class="btn-text">Logout</span>
-        </button> -->
+        </button>
       </div>
     </div>
   </div>
 
-    <div class="emergency-banner" *ngIf="!auth.isLoggedIn()">
+    <div class="emergency-banner" *ngIf="!isAuthenticated">
     <span class="emergency-icon"></span>
     <span class="emergency-text">Emergency: Call 911</span>
   </div>

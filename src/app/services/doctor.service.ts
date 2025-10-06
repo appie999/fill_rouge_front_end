@@ -1,11 +1,15 @@
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
+import { AuthServiceService } from "./auth-service";
 
 export interface Doctor {
-  id?: number;
-  name: string;
-  specialization: string;
+    id: number;
+  firstName: string;
+  lastName: string;
+  userName: string;
+    email: string;
+  specialty: string;
 }
 
 export interface Appointment {
@@ -24,9 +28,9 @@ export interface Appointment {
 export class DoctorService {
 
   private apiUrl = "http://localhost:8080/doctor";
-  private appointmentUrl = "http://localhost:8080/appointment";
+  private appointmentUrl = "http://localhost:8080/doctor/appointment";
 
-    constructor(private http: HttpClient) { }
+    constructor(private http: HttpClient, private auth: AuthServiceService) { }
 
     // Get authentication headers
     private getAuthHeaders(): HttpHeaders {
@@ -43,9 +47,9 @@ export class DoctorService {
     }
 
     // Public endpoint for getting all doctors (for appointment booking)
-    getAllDoctors(){
+    getAllDoctors() : Observable<Doctor[]> {
         // Use a public endpoint that doesn't require authentication
-        return this.http.get<Doctor[]>(`${this.apiUrl}/public/all`);
+        return this.http.get<Doctor[]>(`${this.apiUrl}`);
     }
 
     getDoctorById(id: number){
@@ -69,26 +73,26 @@ export class DoctorService {
     }
 
     getPendingAppointments(): Observable<any[]> {
-        return this.http.get<any[]>(`${this.appointmentUrl}/pending`, { headers: this.getAuthHeaders() });
+        return this.http.get<any[]>(`${this.appointmentUrl}/pending?email=${this.auth.getEmail()}`, { headers: this.getAuthHeaders() });
     }
 
     approuveAppointment(appointmentId: number): Observable<Appointment> {
-        return this.http.put<Appointment>(`${this.appointmentUrl}/${appointmentId}/approve`, {}, { headers: this.getAuthHeaders() });
+        return this.http.put<Appointment>(`${this.appointmentUrl}/${appointmentId}/approve?email=${this.auth.getEmail()}`, {}, { headers: this.getAuthHeaders() });
     }
 
      rejectAppointment(appointmentId: number): Observable<Appointment> {
-        return this.http.put<Appointment>(`${this.appointmentUrl}/${appointmentId}/reject`, {}, { headers: this.getAuthHeaders() });
+        return this.http.put<Appointment>(`${this.appointmentUrl}/${appointmentId}/reject?email=${this.auth.getEmail()}`, {}, { headers: this.getAuthHeaders() });
     }
 
     getAppointmentStats(): Observable<any> {
-        return this.http.get<any>(`${this.appointmentUrl}/stats`, { headers: this.getAuthHeaders() });
+        return this.http.get<any>(`${this.appointmentUrl}/stats?email=${this.auth.getEmail()}`, { headers: this.getAuthHeaders() });
     }
   
     verifyDoctorRelationships(): Observable<any> {
-        return this.http.get<any>(`${this.appointmentUrl}/verify-relationships`, { headers: this.getAuthHeaders() });
+        return this.http.get<any>(`${this.appointmentUrl}/verify-relationships?email=${this.auth.getEmail()}`, { headers: this.getAuthHeaders() });
     }
   
     debugCurrentDoctor(): Observable<any> {
-        return this.http.get<any>(`${this.appointmentUrl}/debug`, { headers: this.getAuthHeaders() });
+        return this.http.get<any>(`${this.appointmentUrl}/debug?email=${this.auth.getEmail()}`, { headers: this.getAuthHeaders() });
     }
 }

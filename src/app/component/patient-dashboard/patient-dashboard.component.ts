@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { VavbarComponent } from '../navbar/vavbar.component';
 import { AuthServiceService } from '../../services/auth-service';
 import { PatientService } from '../../services/patient.service';
@@ -19,6 +19,12 @@ export class PatientDashboardComponent implements OnInit {
   appointments: any[] = [];
   loading = false;
   error = '';
+  successMessage = '';
+  
+  // KPI properties
+  upcomingAppointments = 0;
+  monthlyAppointments = 0;
+  lastVisit = 'N/A';
 
   Role = localStorage.getItem("role");
 
@@ -30,15 +36,48 @@ export class PatientDashboardComponent implements OnInit {
     }
   }
 
-  constructor(public auth: AuthServiceService, private patientService: PatientService) {}
+  constructor(public auth: AuthServiceService, private patientService: PatientService, private router: Router) {}
 
   logout(){
     this.auth.logout();
   }
 
+  // Mobile menu methods
+  toggleMobileMenu() {
+    this.menuOpen = !this.menuOpen;
+  }
+
+  closeMobileMenu(){
+    this.menuOpen = false;
+  }
+
   ngOnInit(): void {
     this.userName = this.auth.getUserName() || 'Patient';
-    this.loadAppointments();
+   this.loadAppointments();
+    this.calculateKPIs();
+  }
+
+  // Calculate KPI values
+  calculateKPIs(): void {
+    // These would normally come from backend API calls
+    this.upcomingAppointments = this.appointments.filter(apt => 
+      apt.status === 'APPROVED' && new Date(apt.date) > new Date()
+    ).length;
+    
+    this.monthlyAppointments = this.appointments.filter(apt => {
+      const aptDate = new Date(apt.date);
+      const now = new Date();
+      return aptDate.getMonth() === now.getMonth() && aptDate.getFullYear() === now.getFullYear();
+    }).length;
+    
+    // Find last visit
+    const pastAppointments = this.appointments.filter(apt => 
+      apt.status === 'APPROVED' && new Date(apt.date) < new Date()
+    );
+    if (pastAppointments.length > 0) {
+      const lastApt = pastAppointments.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
+      this.lastVisit = this.formatDate(lastApt.date);
+    }
   }
 
   loadAppointments(): void {
@@ -46,7 +85,7 @@ export class PatientDashboardComponent implements OnInit {
     this.error = ''; // Clear previous errors
     
     console.log('Loading appointments for patient...');
-    this.patientService.getMyAppointments().subscribe({
+    this.patientService.getMyAppointments(this.auth.getEmail()).subscribe({
       next: (appointments: any[]) => {
         this.appointments = appointments || [];
         console.log('Patient appointments loaded:', appointments);
@@ -58,6 +97,9 @@ export class PatientDashboardComponent implements OnInit {
           statusText: this.getStatusText(apt.status),
           dateFormatted: this.formatDate(apt.date)
         }));
+        
+        // Recalculate KPIs after loading appointments
+        this.calculateKPIs();
         
         if (this.appointments.length === 0) {
           console.log('No appointments found for this patient');
@@ -119,14 +161,34 @@ export class PatientDashboardComponent implements OnInit {
       this.patientService.cancelAppointment(appointmentId).subscribe({
         next: () => {
           console.log('Appointment cancelled successfully');
-          alert('Rendez-vous annulé avec succès!');
+          this.successMessage = 'Rendez-vous annulé avec succès!';
+          this.error = '';
           this.loadAppointments(); // Reload appointments
+          
+          // Clear success message after 3 seconds
+          setTimeout(() => {
+            this.successMessage = '';
+          }, 3000);
         },
         error: (err: any) => {
           console.error('Failed to cancel appointment:', err);
-          alert('Erreur lors de l\'annulation: ' + (err.error?.message || err.message));
+          this.error = 'Erreur lors de l\'annulation: ' + (err.error?.message || err.message);
+          this.successMessage = '';
         }
       });
     }
+  }
+
+  // Quick action methods
+  viewMedicalHistory(): void {
+    // Navigate to medical history page or show modal
+    console.log('Viewing medical history...');
+    // this.router.navigate(['/patient/medical-history']);
+  }
+
+  contactSupport(): void {
+    // Open support contact modal or navigate to support page
+    console.log('Contacting support...');
+    // this.router.navigate(['/support']);
   }
 }

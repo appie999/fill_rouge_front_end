@@ -100,7 +100,6 @@
   border-radius: 20px;
 } 
 
-/* ===== Responsive ===== */
 @media (max-width: 992px) {
   .row { grid-template-columns: 1fr; }
   .image-col { order: -1; }

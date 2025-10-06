@@ -37,6 +37,7 @@ export class LoginComponent implements OnInit {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       this.error = 'Veuillez remplir tous les champs obligatoires.';
+      this.loading = false; // Reset loading state for invalid forms
       return; 
     }
 
@@ -64,8 +65,13 @@ export class LoginComponent implements OnInit {
         }
       },
       error: (errorReponse)  => {
-        console.error('Login error:', errorReponse);
-        if(errorReponse.error && typeof errorReponse.error === 'string'){
+        if(errorReponse.status === 401){
+          this.error = 'invalid email or password';
+          this.loading = false;
+          console.error('Login error:', errorReponse);
+
+        }
+        else if(errorReponse.error && typeof errorReponse.error === 'string'){
           this.error  = errorReponse.error;
         }else if (errorReponse.error && errorReponse.error.message){
           this.error = errorReponse.error.message;

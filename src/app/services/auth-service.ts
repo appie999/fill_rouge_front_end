@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { AuthResponse, RegisterRequest } from '../model/auth.model';
 import { jwtDecode } from 'jwt-decode';
 import { AuthToken } from '../model/AuthToken';
@@ -13,10 +13,17 @@ import { AuthToken } from '../model/AuthToken';
 export class AuthServiceService {
 
   private apiUrl = "http://localhost:8080/auth"
+  private isAuthenticatedSubject = new BehaviorSubject<boolean>(this.hasValidToken());
+  public isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
 
   constructor(private http: HttpClient, private router: Router) { }
 
   token: string | null = localStorage.getItem('token');
+
+  private hasValidToken(): boolean {
+    const token = localStorage.getItem('token');
+    return !!token && !this.isTokenExpired(token);
+  }
 
 
   login(email: string, password: string): Observable<AuthResponse> {
@@ -39,6 +46,8 @@ export class AuthServiceService {
 
   saveAuthData(token: string){
     localStorage.setItem('token', token);
+    this.token = token;
+    this.isAuthenticatedSubject.next(true); // Notify components of auth state change
   }
 
   getUserName(): string | null {
@@ -48,10 +57,19 @@ export class AuthServiceService {
     return `${decodedToken?.firstName} ${decodedToken?.lastName}`.trim() || "user";
   }
 
+    getEmail(): string {
+
+    const decodedToken = this.getDecodedToken(this.token);
+    
+    return `${decodedToken?.email}`.trim();
+  }
+
   logout(){
     localStorage.removeItem('token');
     localStorage.removeItem('role');
     localStorage.removeItem('username');
+    this.token = null;
+    this.isAuthenticatedSubject.next(false); // Notify components of auth state change
     this.router.navigate(['/home']);
   }
 

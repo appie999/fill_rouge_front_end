@@ -1,40 +1,39 @@
 <app-vavbar></app-vavbar>
+<button class="mobile-menu-toggle" (click)="toggleMobileMenu()">
+  <span>☰</span>
+</button>
+
+<div class="overlay" [class.show]="menuOpen" (click)="closeMobileMenu()"></div>
+
 <div class="layout">
-  <!-- Sidebar -->
-  <aside class="sidebar">
+  <aside class="sidebar" [class.open]="menuOpen">
     <div class="brand">Clinic <b>IQ</b></div>
 
     <nav class="menu">
-      <a class="menu-item active" routerLink="/patient/dashboard">
-        <span class="mi"></span><span class="label">Tableau de Bord</span>
-      </a>
-      <a class="menu-item" routerLink="/patient/appointments">
-        <span class="mi"></span><span class="label">Mes Rendez‑vous</span>
+      <a class="menu-item active" routerLink="/patient/dashboard" (click)="closeMobileMenu()">
+        <span class="mi">📊</span><span class="label">Tableau de Bord</span>
       </a>
     </nav>
-
-    <div class="menu-footer">
-      <a class="menu-item danger" routerLink="/logout" (click)="logout()">
-        <span class="mi"></span><span class="label">Déconnexion</span>
-      </a>
-    </div>
   </aside>
 
-  <!-- Main -->
   <main class="content">
-    <!-- Topbar -->
     <header class="topbar">
-      <div></div>
+      <div class="d-md-none"></div>
       <div class="dashboard-header">
-  <h2>Bienvenue, {{ userName }} !</h2>
-</div>
+        <h2>Bienvenue, {{ userName }} !</h2>
+      </div>
     </header>
 
-    <!-- Upcoming appointments -->
+
+    <div *ngIf="successMessage" class="alert alert-success text-center border-0 shadow-sm mb-3">
+      🎉 {{ successMessage }}
+    </div>
+    <div *ngIf="error" class="alert alert-danger text-center border-0 shadow-sm mb-3">
+      ❌ {{ error }}
+    </div>
+
     <section class="card">
       <div class="card-title">Mes Rendez‑vous</div>
-    
-      
       <div *ngIf="loading" class="text-center p-3">
         <p>Chargement des rendez-vous...</p>
       </div>
@@ -42,45 +41,32 @@
         <p><strong>Erreur:</strong> {{ error }}</p>
         <button class="btn btn-sm btn-primary" (click)="loadAppointments()">Réessayer</button>
       </div>
-      <div class="table" *ngIf="!loading && !error">
-        <div class="thead">
-          <div>DATE</div><div>HEURE</div><div>MÉDECIN</div><div>MOTIF</div><div>STATUT</div><div>ACTIONS</div>
-        </div>
-        <div class="tbody">
-          <div class="tr" *ngFor="let appointment of appointments; let i = index">
-            <div data-label="Date">{{ appointment.dateFormatted || formatDate(appointment.date) }}</div>
-            <div data-label="Heure">{{ appointment.time || '10:00' }}</div>
-            <div data-label="Médecin">{{ appointment.doctorName || ('Dr. Médecin ' + appointment.doctorId) }}</div>
-            <div data-label="Motif">{{ appointment.reason || 'Consultation générale' }}</div>
-            <div data-label="Statut">
-              <span class="pill" [ngClass]="getStatusClass(appointment.status)">
-                {{ appointment.statusText || getStatusText(appointment.status) }}
-              </span>
-            </div>
-            <div data-label="Actions" class="actions">
-              <button *ngIf="appointment.status === 'PENDING'" 
-                      class="btn btn-sm btn-danger" 
-                      (click)="cancelAppointment(appointment.id)">
-                Annuler
-              </button>
-              <button *ngIf="appointment.status === 'APPROVED'" 
-                      class="btn btn-sm btn-info">
-                Détails
-              </button>
-              <span *ngIf="appointment.status === 'REJECTED'" class="text-muted">-</span>
-            </div>
+      <div class="table-wrapper" *ngIf="!loading && !error">
+        <div class="table">
+          <div class="thead">
+            <div>DATE</div><div>MÉDECIN</div><div>STATUT</div>
           </div>
-          <div class="tr" *ngIf="!loading && !error && appointments.length === 0">
-            <div colspan="6" class="text-center text-muted p-3">
-              <p>Aucun rendez-vous trouvé</p>
-              <p class="small">Cliquez sur "Prendre un Rendez-vous" pour réserver votre premier rendez-vous</p>
+          <div class="tbody">
+            <div class="tr" *ngFor="let appointment of appointments; let i = index">
+              <div data-label="Date">{{ appointment.dateFormatted || formatDate(appointment.date) }}</div>
+              <div data-label="Médecin">{{'Dr id.' + appointment.doctorId }}</div>
+              <div data-label="Statut">
+                <span class="pill" [ngClass]="getStatusClass(appointment.status)">
+                  {{ appointment.statusText || getStatusText(appointment.status) }}
+                </span>
+              </div>
+            </div>
+            <div class="tr" *ngIf="!loading && !error && appointments.length === 0">
+              <div colspan="6" class="text-center text-muted p-3">
+                <p>Aucun rendez-vous trouvé</p>
+                <p class="small">Cliquez sur "Prendre un Rendez-vous" pour réserver votre premier rendez-vous</p>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Quick actions -->
     <section class="quick-grid">
       <a class="quick-card" routerLink="/book-appointment">
         <span class="q-ico"></span><span class="q-text">Prendre un Rendez‑vous</span>

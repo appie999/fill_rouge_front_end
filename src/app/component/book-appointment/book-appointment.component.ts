@@ -10,7 +10,7 @@ import { VavbarComponent } from '../navbar/vavbar.component';
 interface Doctor {
   id: number;
   name: string;
-  specialization: string; // Note: using 'specialization' to match backend
+  specialization: string; 
 }
 
 @Component({
@@ -41,13 +41,7 @@ export class BookAppointmentComponent implements OnInit {
   }
   
   ngOnInit(): void {
-    this.doctorService.getAllDoctors().subscribe({
-      next: (doctors: any[]) => { this.doctors = doctors;
-        console.log('Doctors loaded on init:', this.doctors);
-      },
-      error: (err: any) => { console.error('Error loading doctors on init:', err); }  
-      
-    }); // Preload doctors
+   
     this.getDoctors();
     // Check if user is logged in
     if (!this.auth.isLoggedIn()) {
@@ -103,7 +97,8 @@ export class BookAppointmentComponent implements OnInit {
     const payload = {
       doctorId: Number(this.form.value.doctorId),
       date: this.form.value.date,
-      reason: this.form.value.reason
+      reason: this.form.value.reason,
+      email: this.auth.getEmail()
     };
 
     console.log('Booking appointment with payload:', payload);
@@ -117,9 +112,7 @@ export class BookAppointmentComponent implements OnInit {
         this.form.reset();
         
         // Auto-redirect to dashboard after 3 seconds
-        setTimeout(() => {
-          this.router.navigate(['/patient/dashboard']);
-        }, 3000);
+      
       },             
       error: (err: any) => { 
         console.error('Booking error:', err);
@@ -171,8 +164,7 @@ export class BookAppointmentComponent implements OnInit {
     // Map the doctor data to match our interface
     this.doctors = doctors.map(doctor => ({
       id: doctor.id,
-      name: doctor.name,
-      speciality: doctor.specialization || doctor.speciality // Handle both field names
+      name: doctor.firstName + ' ' + doctor.lastName,
     }));
     
     console.log('Mapped doctors for display:', this.doctors);

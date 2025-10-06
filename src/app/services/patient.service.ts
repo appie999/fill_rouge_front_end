@@ -64,18 +64,18 @@ export class PatientService {
     return this.http.post(`${this.base}`, p, { headers: this.getAuthHeaders() });
   }
 
-  getDoctorsNames(): Observable<any[]> {
-    return this.http.get<any[]>("http://localhost:8080/doctor/doctor-names", { headers: this.getAuthHeaders() });
+  getDoctorsNames(): Observable<Doctor[]> {
+    return this.http.get<Doctor[]>("http://localhost:8080/doctor", { headers: this.getAuthHeaders() });
   }
 
-  getDoctors(): Observable<any[]> {
-    return this.http.get<any[]>("http://localhost:8080/doctor/doctor-names", { headers: this.getAuthHeaders() });
+  getDoctors(): Observable<Doctor[]> {
+    return this.http.get<Doctor[]>("http://localhost:8080/doctor", { headers: this.getAuthHeaders() });
   }
 
   // Get patient's appointments
-  getMyAppointments(): Observable<any[]> {
+  getMyAppointments(email : string): Observable<any[]> {
     console.log('PatientService: Fetching appointments from:', `${this.base}`);
-    return this.http.get<any[]>(`${this.base}`, { headers: this.getAuthHeaders() });
+    return this.http.get<any[]>(`${this.base}/get-all?email=${email}`, { headers: this.getAuthHeaders() });
   }
 
   // Cancel appointment
